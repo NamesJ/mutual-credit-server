@@ -65,7 +65,25 @@ def accounts_filter():
 
 @app.route('/api/v1/balance', methods=['GET'])
 def account_balance():
-    pass
+    query_parameters = request.args
+
+    id = query_parameters.get('id')
+
+    query = 'SELECT balance FROM accounts WHERE id=?'
+    to_filter = []
+
+    if id:
+        to_filter.append(id)
+    if not id:
+        return page_not_found(404)
+
+    conn = sqlite3.connect(db_file)
+    conn.row_factory = dict_factory
+    cur = conn.cursor()
+
+    result = cur.execute(query, to_filter).fetchone()
+
+    return make_response(jsonify(account), 200)
 
 
 @app.route('/api/v1/range', methods=['GET'])
