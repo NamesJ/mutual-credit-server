@@ -58,7 +58,7 @@ def accounts_filter():
     conn.row_factory = dict_factory
     cur = conn.cursor()
 
-    account = cur.execute(query, to_filter)
+    account = cur.execute(query, to_filter).fetchone()
 
     return make_response(jsonify(account), 200)
 
