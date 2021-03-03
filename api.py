@@ -68,7 +68,7 @@ def accounts_filter():
         try:
             id = data['id']
             #balance = data['balance']
-        except AttributeError:
+        except KeyError:
             return make_response(400)
 
         try:
