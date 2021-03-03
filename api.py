@@ -216,7 +216,7 @@ def transactions_all():
     return jsonify(results)
 
 
-@app.route('/api/v1/transactions', methods=['GET', 'POST'])
+@app.route('/api/v1/transactions', methods=['GET', 'POST', 'PUT'])
 def transactions():
     if request.method == 'GET':
         query_parameters = request.args
@@ -261,7 +261,7 @@ def transactions():
             results = cur.execute(query, to_filter).fetchall()
 
         return jsonify(results)
-    else:
+    elif request.method == 'POST':
         data = request.get_json()
 
         try:
@@ -289,3 +289,5 @@ def transactions():
             conn.execute(query, tx)
 
         return make_response(jsonify('Success'), 200)
+    else: # request.method == 'PUT'
+        pass
