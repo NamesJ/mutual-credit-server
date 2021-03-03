@@ -55,6 +55,7 @@ def init_transactions_table(conn):
                                 buyer_id text NOT NULL,
                                 seller_id text NOT NULL,
                                 amount int NOT NULL,
+                                memo text,
                                 status text NOT NULL,
                                 start_timestamp int NOT NULL,
                                 end_timestamp int,

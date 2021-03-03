@@ -224,6 +224,7 @@ def transactions():
         buyer_id = query_parameters.get('buyer_id')
         seller_id = query_parameters.get('seller_id')
         amount = query_parameters.get('amount')
+        memo = query_parameters.get('memo')
         status = query_parameters.get('status')
         start_timestamp = query_parameters.get('start_timestamp')
         end_timestamp = query_parameters.get('end_timestamp')
@@ -243,6 +244,9 @@ def transactions():
         if amount:
             query += ' amount=? AND'
             to_filter.append(amount)
+        if memo:
+            query += ' memo=? AND'
+            to_filter.append(memo)
         if status:
             query += ' status=? AND'
             to_filter.append(status)
@@ -271,24 +275,32 @@ def transactions():
             buyer_id = data['buyer_id']
             seller_id = data['seller_id']
             amount = data['amount']
-            #status = int(data['status'])
-            #start_timestamp = data['start_timestamp']
-            #end_timestamp = data['end_timestamp']
         except KeyError:
             return make_response(400)
 
+        try: # optional memo
+            memo = data['memo']
+        except KeyError:
+            memo = None
+
         id = uuid4().hex
-        tx = (id, buyer_id, seller_id, amount, 'PENDING', int(time.time()), None)
+        status = 'PENDING'
+        start_timestamp = int(time.time())
+        end_timestamp = None
+
+        tx = (id, buyer_id, seller_id, amount, memo, status, start_timestamp,
+                end_timestamp)
 
         query = ''' INSERT INTO transactions(
                         id,
                         buyer_id,
                         seller_id,
                         amount,
+                        memo,
                         status,
                         start_timestamp,
                         end_timestamp)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)'''
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
 
         with db.connect() as conn:
             conn.execute(query, tx)
