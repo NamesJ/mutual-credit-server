@@ -221,7 +221,8 @@ def transactions():
 
         id = query_parameters.get('id')
         buyer_id = query_parameters.get('buyer_id')
-        offer_id = query_parameters.get('offer_id')
+        seller_id = query_parameters.get('seller_id')
+        amount = query_parameters.get('amount')
         status = query_parameters.get('status')
         start_timestamp = query_parameters.get('start_timestamp')
         end_timestamp = query_parameters.get('end_timestamp')
@@ -235,9 +236,12 @@ def transactions():
         if buyer_id:
             query += ' seller_id=? AND'
             to_filter.append(buyer_id)
-        if offer_id:
-            query += ' offer_id=? AND'
-            to_filter.append(offer_id)
+        if seller_id:
+            query += ' seller_id=? AND'
+            to_filter.append(seller_id)
+        if amount:
+            query += ' amount=? AND'
+            to_filter.append(amount)
         if status:
             query += ' status=? AND'
             to_filter.append(status)
@@ -247,8 +251,8 @@ def transactions():
         if end_timestamp:
             query += ' end_timestamp=? AND'
             to_filter.append(buyer_id)
-        if not (id or buyer_id or offer_id or status or start_timestamp or
-                end_timestamp):
+        if not (id or buyer_id or seller_id or amount or status or
+                start_timestamp or end_timestamp):
             return page_not_found(404)
 
         query = query[:-4] + ';'
@@ -264,7 +268,8 @@ def transactions():
 
         try:
             buyer_id = data['buyer_id']
-            offer_id = data['offer_id']
+            seller_id = data['seller_id']
+            amount = data['amount']
             #status = int(data['status'])
             #start_timestamp = data['start_timestamp']
             #end_timestamp = data['end_timestamp']
@@ -272,12 +277,13 @@ def transactions():
             return make_response(400)
 
         id = uuid4().hex
-        tx = (id, buyer_id, offer_id, 'PENDING', int(time.time()), None)
+        tx = (id, buyer_id, seller_id, amount, 'PENDING', int(time.time()), None)
 
         query = ''' INSERT INTO transactions(
                         id,
                         buyer_id,
-                        offer_id,
+                        seller_id,
+                        amount,
                         status,
                         start_timestamp,
                         end_timestamp)
