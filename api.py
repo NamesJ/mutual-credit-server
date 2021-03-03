@@ -1,8 +1,12 @@
 import flask
 from flask import request, jsonify, make_response
+import sqlite3
 
 app = flask.Flask(__name__)
 app.config['DEBUG'] = True
+
+
+db_file = 'credit_system.db'
 
 
 def dict_factory(cursor, row):
@@ -27,12 +31,36 @@ def home():
 
 @app.route('/api/v1/accounts/all', methods=['GET'])
 def accounts_all():
-    pass
+    conn = sqlite3.connect(db_file)
+    conn.row_factory = dict_factory
+    cur = conn.cursor()
+    query = 'SELECT * FROM accounts'
+    all_accounts = cur.execute(query).fetchall()
+
+    return make_response(jsonify(all_accounts), 200)
 
 
 @app.route('/api/v1/accounts', methods=['GET'])
 def accounts_filter():
-    pass
+    query_parameters = request.args
+
+    id = query_parameters.get('id')
+
+    query = 'SELECT * FROM accounts WHERE id=?'
+    to_filter = []
+
+    if id:
+        to_filter.append(id)
+    if not id:
+        return page_not_found(404)
+
+    conn = sqlite3.connect(db_file)
+    conn.row_factory = dict_factory
+    cur = conn.cursor()
+
+    account = cur.execute(query, to_filter)
+
+    return make_response(jsonify(account), 200)
 
 
 @app.route('/api/v1/balance', methods=['GET'])

@@ -1,3 +1,8 @@
+# sqlite3 tools
+sqldiff.exe
+sqlite3_analyzer.exe
+sqlite3.exe
+
 credit_system.db
 
 # Byte-compiled / optimized / DLL files
