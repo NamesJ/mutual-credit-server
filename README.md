@@ -24,6 +24,9 @@ source <venv>/bin/activate
 ## Install requirements
 python -m pip install -r requirements.txt
 
-# Start the server
+# Start the API server
 python main.py
+
+# Seed the database via API client
+python test/seed_db.py
 ```
