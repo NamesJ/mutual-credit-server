@@ -175,7 +175,13 @@ def offers_filter():
 
 @app.route('/api/v1/transactions/all', methods=['GET'])
 def transactions_all():
-    pass
+    with db.connect() as conn:
+        conn.row_factory = dict_factory
+        cur = conn.cursor()
+        query = 'SELECT * FROM transactions'
+        results = cur.execute(query).fetchall()
+
+    return jsonify(results)
 
 
 @app.route('/api/v1/transactions', methods=['GET'])
