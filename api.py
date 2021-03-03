@@ -41,26 +41,57 @@ def accounts_all():
     return make_response(jsonify(results), 200)
 
 
-@app.route('/api/v1/accounts', methods=['GET'])
+@app.route('/api/v1/accounts', methods=['GET', 'POST'])
 def accounts_filter():
-    query_parameters = request.args
+    if request.method == 'GET':
+        query_parameters = request.args
 
-    id = query_parameters.get('id')
+        id = query_parameters.get('id')
 
-    query = 'SELECT * FROM accounts WHERE id=?'
-    to_filter = []
+        query = 'SELECT * FROM accounts WHERE id=?'
+        to_filter = []
 
-    if id:
-        to_filter.append(id)
-    if not id:
-        return page_not_found(404)
+        if id:
+            to_filter.append(id)
+        if not id:
+            return page_not_found(404)
 
-    with db.connect() as conn:
-        conn.row_factory = dict_factory
-        cur = conn.cursor()
-        result = cur.execute(query, to_filter).fetchone()
+        with db.connect() as conn:
+            conn.row_factory = dict_factory
+            cur = conn.cursor()
+            result = cur.execute(query, to_filter).fetchone()
 
-    return jsonify(result)
+        return jsonify(result)
+    else:
+        data = request.get_json()
+
+        try:
+            id = data['id']
+            #balance = data['balance']
+        except AttributeError:
+            return make_response(400)
+
+        try:
+            max_balance = int(data['max_balance'])
+            min_balance = int(data['min_balance'])
+        except KeyError:
+            max_balance, min_balance = 0, 0
+
+
+        #id = uuid4().hex
+        account = (id, 0, max_balance, min_balance)
+
+        query = ''' INSERT INTO accounts(
+                        id,
+                        balance,
+                        max_balance,
+                        min_balance)
+                    VALUES (?, ?, ?, ?)'''
+
+        with db.connect() as conn:
+            conn.execute(query, account)
+
+        return make_response(jsonify('Success'), 200)
 
 
 @app.route('/api/v1/balance', methods=['GET'])
