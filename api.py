@@ -72,21 +72,19 @@ def accounts_filter():
             return make_response(400)
 
         try:
-            max_balance = int(data['max_balance'])
-            min_balance = int(data['min_balance'])
+            allowance = int(data['allowance'])
         except KeyError:
-            max_balance, min_balance = 0, 0
+            allowance = 100
 
 
         #id = uuid4().hex
-        account = (id, 0, max_balance, min_balance)
+        account = (id, 0, allowance)
 
         query = ''' INSERT INTO accounts(
                         id,
                         balance,
-                        max_balance,
-                        min_balance)
-                    VALUES (?, ?, ?, ?)'''
+                        allowance)
+                    VALUES (?, ?, ?)'''
 
         with db.connect() as conn:
             conn.execute(query, account)
@@ -116,13 +114,13 @@ def account_balance():
     return jsonify(result)
 
 
-@app.route('/api/v1/range', methods=['GET'])
+@app.route('/api/v1/allowance', methods=['GET'])
 def account_range():
     query_parameters = request.args
 
     id = query_parameters.get('id')
 
-    query = 'SELECT max_balance, min_balance FROM accounts WHERE id=?'
+    query = 'SELECT allowance FROM accounts WHERE id=?'
     to_filter = []
 
     if id:
