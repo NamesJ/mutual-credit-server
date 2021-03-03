@@ -104,7 +104,8 @@ def seed_db_pending_txs(client, accounts, offers):
             tx = {
                 'buyer_id': buyer['id'],
                 'seller_id': offer['seller_id'],
-                'amount': offer['price']
+                'amount': offer['price'],
+                'memo': offer['title']
             }
             client.add_transaction(tx)
             txs.append(tx)
