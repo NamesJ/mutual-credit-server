@@ -41,24 +41,23 @@ def init_offer_categories_table(conn):
 
 def init_offers_table(conn):
     _create_table(conn, ''' CREATE TABLE IF NOT EXISTS offers (
-                                id text,
-                                seller_id integer,
+                                id text PRIMARY KEY,
+                                seller_id text NOT NULL,
                                 description text NOT NULL,
                                 price integer NOT NULL,
                                 title text NOT NULL,
-                                PRIMARY KEY (id, seller_id),
-                                FOREIGN KEY(seller_id) REFERENCES members(id)
+                                FOREIGN KEY(seller_id) REFERENCES accounts(id)
                             ); ''')
 
 
 def init_transactions_table(conn):
     _create_table(conn, ''' CREATE TABLE IF NOT EXISTS transactions (
                                 id text PRIMARY KEY,
-                                buyer_id int NOT NULL,
-                                offer_id text,
+                                buyer_id text NOT NULL,
+                                seller_id text NOT NULL,
                                 status text NOT NULL,
                                 start_timestamp int NOT NULL,
                                 end_timestamp int,
-                                FOREIGN KEY(buyer_id) REFERENCES members(id),
-                                FOREIGN KEY(offer_id) REFERENCES offers(id)
+                                FOREIGN KEY(buyer_id) REFERENCES accounts(id),
+                                FOREIGN KEY(seller_id) REFERENCES accounts(id)
                             );''')
