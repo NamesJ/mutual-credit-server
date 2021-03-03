@@ -26,8 +26,7 @@ def init_accounts_table(conn):
     _create_table(conn, ''' CREATE TABLE IF NOT EXISTS accounts (
                                 id int PRIMARY KEY,
                                 balance integer NOT NULL,
-                                max_balance integer NOT NULL,
-                                min_balance integer NOT NULL
+                                allowance integer NOT NULL
                         ); ''')
 
 
