@@ -62,8 +62,9 @@ def accounts_filter():
             result = cur.execute(query, to_filter).fetchone()
 
         return jsonify(result)
-    else:
+    else: # POST
         data = request.get_json()
+        print(f'data: {data}')
 
         try:
             id = data['id']
@@ -273,7 +274,7 @@ def transactions():
             #status = int(data['status'])
             #start_timestamp = data['start_timestamp']
             #end_timestamp = data['end_timestamp']
-        except AttributeError:
+        except KeyError:
             return make_response(400)
 
         id = uuid4().hex
@@ -287,11 +288,78 @@ def transactions():
                         status,
                         start_timestamp,
                         end_timestamp)
-                    VALUES (?, ?, ?, ?, ?, ?)'''
+                    VALUES (?, ?, ?, ?, ?, ?, ?)'''
 
         with db.connect() as conn:
             conn.execute(query, tx)
 
         return make_response(jsonify('Success'), 200)
     else: # request.method == 'PUT'
-        pass
+        data = request.get_json()
+
+        try:
+            tx_id = data['id']
+            action = data['action']
+        except KeyError:
+            return page_not_found(400)
+
+        if action not in ['cancel', 'deny', 'approve']:
+            return page_not_found(400)
+
+        with db.connect() as conn:
+            conn.row_factory = dict_factory
+            cur = conn.cursor()
+            query = 'SELECT * FROM transactions WHERE id=?'
+            result = cur.execute(query, (tx_id,)).fetchone()
+            if len(result) == 0: # tx does not exist
+                return page_not_found(400)
+            if result['status'] != 'PENDING': # can only update pending txs
+                return page_not_found(400)
+
+        if action == 'approve':
+            status = 'APPROVED'
+
+            with db.connect() as conn:
+                conn.row_factory = dict_factory
+                cur = conn.cursor()
+
+                query = 'SELECT * FROM transactions WHERE id=?'
+                tx = cur.execute(query, (tx_id,)).fetchone()
+
+            amount = tx['amount']
+            buyer_id = tx['buyer_id']
+            seller_id = tx['seller_id']
+            update_balances(amount, buyer_id, seller_id)
+        elif action == 'cancel':
+            status = 'CANCELLED'
+        else: # action == 'deny'
+            status = 'DENIED'
+
+        query = ''' UPDATE transactions
+                    SET status=?
+                    WHERE id=?'''
+
+        status_update = (status, tx_id)
+
+        with db.connect() as conn:
+            conn.execute(query, status_update)
+
+        return make_response(jsonify('Success'), 200)
+
+
+def update_balances(amount, buyer_id, seller_id):
+    with db.connect() as conn:
+        conn.row_factory = dict_factory
+        cur = conn.cursor()
+
+        query = 'SELECT * FROM accounts WHERE id=?'
+        buyer = cur.execute(query, (buyer_id,)).fetchone()
+        buyer_balance = buyer['balance']
+        seller = cur.execute(query, (seller_id,)).fetchone()
+        seller_balance = seller['balance']
+
+        query = 'UPDATE accounts SET balance=? WHERE id=?'
+        buyer_balance -= amount
+        cur.execute(query, (buyer_balance, buyer_id))
+        seller_balance += amount
+        cur.execute(query, (seller_balance, seller_id))
