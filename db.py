@@ -55,7 +55,7 @@ def init_transactions_table(conn):
     _create_table(conn, ''' CREATE TABLE IF NOT EXISTS transactions (
                                 id text PRIMARY KEY,
                                 buyer_id int NOT NULL,
-                                offer_id text NOT NULL,
+                                offer_id text,
                                 status text NOT NULL,
                                 start_timestamp int NOT NULL,
                                 end_timestamp int,
