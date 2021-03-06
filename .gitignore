@@ -1,3 +1,6 @@
+# ignoreme folder
+/ignoreme
+
 # sqlite3 tools
 sqldiff.exe
 sqlite3_analyzer.exe
