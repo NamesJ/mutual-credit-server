@@ -6,17 +6,20 @@ Column = db.Column
 Model = db.Model
 
 
+def now():
+    return datetime.utcnow()
+
+
 class Transfer(Model):
     ''' Transfer model for storing transfer related data '''
-    __tablename__ = 'transfers'
 
     id = Column(db.Integer, primary_key=True)
-    sender = Column(db.Integer, db.ForeignKey('user.id'))
-    receiver = Column(db.Integer, db.ForeignKey('user.id'))
-    value = Column(db.Integer)
-    memo = Column(db.String(100))
-    status = Column(db.String)
-    opened_on = Column(db.DateTime, default=datetime.utcnow)
+    sender = Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    receiver = Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    value = Column(db.Integer, nullable=False)
+    memo = Column(db.String(100), nullable=False, default='')
+    status = Column(db.String, nullable=False, server_default='PENDING')
+    opened_on = Column(db.DateTime, nullable=False, default=datetime.utcnow())
     closed_on = Column(db.DateTime)
 
     def __init__(self, **kwargs):
