@@ -36,7 +36,15 @@ class TransferDto:
         },
     )
 
-    transfer_create_success = api.model(
+    transfer_status_update = api.model(
+        'Transfer status update data',
+        {
+            'id': fields.Integer,
+            'action': fields.String,
+        }
+    )
+
+    transfer_success = api.model(
         'Transfer create success response',
         {
             "status": fields.Boolean,

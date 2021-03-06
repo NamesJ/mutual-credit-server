@@ -71,7 +71,41 @@ class TransferService:
 
 
     @staticmethod
-    def get_transfers_data(data):
+    def get_transfer_data(data):
+        ''' Get transfer data by ID '''
+        transfer_id = data['id']
+
+        from .utils import load_data
+
+        try:
+
+            # Check if transfer exists
+            if not (transfer := Transfer.query.filter_by(id=transfer_id).first()):
+                return err_resp('Transfer does not exist', 'transfer_404', 404)
+
+            # Get sender user
+            if not(sender := User.query.filter_by(id=transfer.sender).first()):
+                return err_resp('Sender user does not exist', 'user_404', 404)
+
+            # Get receiver user
+            if not (receiver := User.query.filter_by(id=transfer.receiver).first()):
+                return err_resp('Receiver user does not exist', 'user_404', 404)
+
+            transfer_data = load_data(transfer)
+
+            resp = message(True, 'Transfer data sent.')
+            transfer_data['sender'] = sender.username
+            transfer_data['receiver'] = receiver.username
+            resp['transfer'] = transfer_data
+            return resp, 200
+
+        except Exception as error:
+            print(error)
+            return internal_err_resp()
+
+
+    @staticmethod
+    def search_transfers_data(data):
         ''' Get transfers data by attributes '''
         # Optional values
         id = data.get('sender', None)
@@ -135,6 +169,73 @@ class TransferService:
 
 
     @staticmethod
-    def set_transfer_status(id):
-        ''' Set transfer status by ID '''
-        pass
+    def update_transfer_status(data):
+        ''' Update transfer status by ID and action '''
+        ## Required values
+        transfer_id = data['id'] # receiver username
+        action = data['action']
+
+        id = get_jwt_identity()
+
+        from .utils import load_data
+
+        # Check if user exists
+        if not (user := User.query.filter_by(id=id).first()):
+            # It would be very strange if this error happened ;/
+            return err_resp('User with calling ID does not exist', 'user_404', 404)
+
+        # Check if transfer exists
+        if not (transfer := Transfer.query.filter_by(id=transfer_id).first()):
+            return err_resp('Transfer does not exist', 'id_404', 404)
+
+        # Check if transfer status is 'PENDING' (only one that can change)
+        if not transfer.status == 'PENDING':
+            return err_resp(f'Transfer has status of {transfer.status}', 'status_404', 404)
+
+        # Get sender user
+        if not (sender := User.query.filter_by(id=transfer.sender).first()):
+            return err_resp('User with sender ID of transfer does not exist', 'user_404', 404)
+
+        # Get receiver user
+        if not (receiver := User.query.filter_by(id=transfer.receiver).first()):
+            return err_resp('User with receiver ID of transfer does not exist', 'user_404', 404)
+
+        try:
+
+            if action == 'approve':
+                # Only the receiver can approve a pending transfer
+                if id != receiver.id:
+                    return err_resp('Only the receiver can approve a pending transfer', 'auth_404', 404)
+                transfer.status = 'APPROVED'
+                transfer.closed_on = datetime.utcnow()
+
+            elif action == 'cancel':
+                # Only the sender can cancel a pending transfer
+                if id != sender.id:
+                    return err_resp('Only the sender can cancel a pending transfer', 'auth_404', 404)
+                transfer.status = 'CANCELLED'
+                transfer.closed_on = datetime.utcnow()
+
+            elif action == 'deny':
+                # Only the receiver can deny a pending transfer
+                if id != receiver.id:
+                    return err_resp('Only the receiver can deny a pending transfer', 'auth_404', 404)
+                transfer.status = 'DENIED'
+                transfer.closed_on = datetime.utcnow()
+
+            else:
+                return err_resp('Invalid update action provided', 'status_404', 404)
+
+            transfer_data = load_data(transfer)
+
+            db.session.commit()
+
+            resp = message(True, 'Status update succeeded.')
+            transfer_data['sender'] = sender.username
+            transfer_data['receiver'] = receiver.username
+            resp['transfer'] = transfer_data
+            return resp, 200
+
+        except Exception as error:
+            print(error)
+            return internal_err_resp()

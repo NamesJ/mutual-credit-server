@@ -41,6 +41,16 @@ class TransferCreateSchema(Schema):
     memo = fields.Str(required=False, validate=[Length(max=128)])
 
 
+class TransferGetSchema(Schema):
+    """ /transfer [GET]
+
+    Parameters:
+    - Id (Int)
+    """
+
+    id = fields.Int(required=False, validate=[Range(min=1)])
+
+
 class TransferSearchSchema(Schema):
     """ /transfer/search [POST]
 
@@ -53,7 +63,7 @@ class TransferSearchSchema(Schema):
     - Memo (Str)
     """
 
-    id = fields.Str(required=False, validate=[Range(min=1)])
+    id = fields.Int(required=False, validate=[Range(min=1)])
     sender = fields.Str(
         required=False,
         validate=[
@@ -80,3 +90,19 @@ class TransferSearchSchema(Schema):
     )
     value = fields.Int(required=False, validate=[Range(min=1)])
     memo = fields.Str(required=False, validate=[Length(max=128)])
+
+
+
+class TransferStatusUpdateSchema(Schema):
+    """ /transfer [PUT]
+
+    Parameters:
+    - Id (Int)
+    - Action (Str)
+    """
+
+    id = fields.Int(required=False, validate=[Range(min=1)])
+    action = fields.Str(
+        required=False,
+        validate=[OneOf(['approve', 'cancel', 'deny'])]
+    )
