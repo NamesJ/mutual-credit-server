@@ -45,6 +45,7 @@ class TransferSearchSchema(Schema):
     """ /transfer/search [POST]
 
     Parameters:
+    - Id (Int)
     - Sender (Str)
     - Receiver (Str)
     - Status (Str)
@@ -52,6 +53,7 @@ class TransferSearchSchema(Schema):
     - Memo (Str)
     """
 
+    id = fields.Str(required=False, validate=[Range(min=1)])
     sender = fields.Str(
         required=False,
         validate=[

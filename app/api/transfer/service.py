@@ -74,6 +74,7 @@ class TransferService:
     def get_transfers_data(data):
         ''' Get transfers data by attributes '''
         # Optional values
+        id = data.get('sender', None)
         sender = data.get('sender', None)
         receiver = data.get('receiver', None)
         status = data.get('status', None)
@@ -94,6 +95,7 @@ class TransferService:
                 return err_resp('Receiver does not exist', 'username_404', 404)
 
         search_data = {}
+        if id: search_data['id'] = id
         if sender: search_data['sender'] = sender.id
         if receiver: search_data['receiver'] = receiver.id
         if status: search_data['status'] = status
