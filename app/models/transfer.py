@@ -6,10 +6,6 @@ Column = db.Column
 Model = db.Model
 
 
-def now():
-    return datetime.utcnow()
-
-
 class Transfer(Model):
     ''' Transfer model for storing transfer related data '''
 
