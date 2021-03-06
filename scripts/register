@@ -2,10 +2,5 @@
 
 # parameters: email username name password
 
-read token
-
-token="${token%\"}"
-token="${token#\"}"
-
 
 curl -H "Authorization: Bearer $token" -X POST "http://127.0.0.1:5000/auth/register" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"email\": \"$1\",  \"username\": \"$2\",  \"name\": \"$3\",  \"password\": \"$4\"}"
