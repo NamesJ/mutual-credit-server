@@ -1,0 +1,11 @@
+#!/bin/bash
+
+read token
+
+token="${token%\"}"
+token="${token#\"}"
+#echo "$token"
+
+echo "$@"
+
+curl --silent -H "Authorization: Bearer $token" -H "Content-Type: application/json" -X POST -d "{ \"receiver\" : \"$1\", \"value\" : $2, \"memo\" : \"$3\" }" http://127.0.0.1:5000/api/transfer/create

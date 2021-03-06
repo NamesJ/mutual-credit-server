@@ -3,7 +3,7 @@ sqldiff.exe
 sqlite3_analyzer.exe
 sqlite3.exe
 
-credit_system.db
+*.sqlite
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

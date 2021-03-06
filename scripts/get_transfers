@@ -1,0 +1,66 @@
+#!/bin/bash
+
+#!/bin/bash
+
+read token
+
+token="${token%\"}"
+token="${token#\"}"
+
+# -s sender
+# -r receiver
+# -q status
+# -n value
+
+while getopts ":s:r:q:n:" opt; do
+  case $opt in
+    s) sender="$OPTARG"
+    ;;
+    r) receiver="$OPTARG"
+    ;;
+    q) status="$OPTARG"
+    ;;
+    n) value=="$OPTARG"
+    ;;
+    \?) echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
+
+data="{ "
+
+
+x=""
+
+if [ -z ${sender+x} ];
+  then data="$data";
+  else data="$data \"sender\" : \"$sender\"";
+fi
+
+if [ -z ${receiver+x} ];
+  then data="$data";
+  else data="$data \"receiver\" : \"$receiver\"";
+fi
+
+if [ -z ${status+x} ];
+  then data="$data";
+  else data="$data \"status\" : \"$status\"";
+fi
+
+if [ -z ${value+x} ];
+  then data="$data";
+  else data="$data \"value\" : \"$value\"";
+fi
+
+# Remove last comma (if exists)
+data=${data%,}
+data="$data }"
+
+
+echo "data=$data"
+
+
+#curl --silent -H "Authorization: Bearer $token" -H "Content-Type: application/json" -X POST -d "{ \"receiver\" : \"$1\", \"value\" : $2, \"memo\" : \"$3\" }" http://127.0.0.1:5000/api/transfer/create
+
+curl --silent -H "Authorization: Bearer $token" -H "Content-Type: application/json" -X GET -d "$data" http://127.0.0.1:5000/api/transfer/search
