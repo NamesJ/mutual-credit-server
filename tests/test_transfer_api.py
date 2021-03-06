@@ -226,9 +226,16 @@ class TestTransferBlueprint(BaseTestCase):
         cancel_response = cancel_transfer(self, alice_access_token, None)
         cancel_data = json.loads(cancel_response.data.decode())
 
-        # TODO: Check that values that shouldn't have changed, haven't changed
-        # transfer_data <--> cancel_data
+        # Check for expected changes
+        self.assertEqual(transfer_data['transfer']['sender'], cancel_data['transfer']['sender'])
+        self.assertEqual(transfer_data['transfer']['receiver'], cancel_data['transfer']['receiver'])
+        self.assertEqual(transfer_data['transfer']['value'], cancel_data['transfer']['value'])
+        self.assertEqual(transfer_data['transfer']['memo'], cancel_data['transfer']['memo'])
+        self.assertNotEqual(transfer_data['transfer']['status'], cancel_data['transfer']['status'])
+        self.assertEqual(transfer_data['transfer']['opened_on'], cancel_data['transfer']['opened_on'])
+        self.assertNotEqual(transfer_data['transfer']['closed_on'], cancel_data['transfer']['closed_on'])
 
+        # Check for expected values
         self.assertTrue(cancel_response.status)
         self.assertEqual(cancel_response.status_code, 200)
         self.assertEqual(cancel_data['transfer']['sender'], alice_username)
@@ -238,8 +245,6 @@ class TestTransferBlueprint(BaseTestCase):
         self.assertEqual(cancel_data['transfer']['status'], 'CANCELLED')
         self.assertIsNotNone(cancel_data['transfer']['opened_on'])
         self.assertIsNotNone(cancel_data['transfer']['closed_on'])
-
-        self.assertTrue(False)
 
         db.session.remove()
 
@@ -282,10 +287,28 @@ class TestTransferBlueprint(BaseTestCase):
         self.assertIsNone(transfer_data['transfer']['closed_on'])
 
         # Bobby denies the transfer from Alice
-        resp = deny_transfer(self, bobby_access_token, None)
-        print(resp)
+        deny_response = deny_transfer(self, bobby_access_token, None)
+        deny_data = json.loads(deny_response.data.decode())
 
-        self.assertTrue(False)
+        # Check for expected changes
+        self.assertEqual(transfer_data['transfer']['sender'], deny_data['transfer']['sender'])
+        self.assertEqual(transfer_data['transfer']['receiver'], deny_data['transfer']['receiver'])
+        self.assertEqual(transfer_data['transfer']['value'], deny_data['transfer']['value'])
+        self.assertEqual(transfer_data['transfer']['memo'], deny_data['transfer']['memo'])
+        self.assertNotEqual(transfer_data['transfer']['status'], deny_data['transfer']['status'])
+        self.assertEqual(transfer_data['transfer']['opened_on'], deny_data['transfer']['opened_on'])
+        self.assertNotEqual(transfer_data['transfer']['closed_on'], deny_data['transfer']['closed_on'])
+
+        # Check for expected values
+        self.assertTrue(deny_response.status)
+        self.assertEqual(deny_response.status_code, 200)
+        self.assertEqual(deny_data['transfer']['sender'], alice_username)
+        self.assertEqual(deny_data['transfer']['receiver'], t_info['receiver'])
+        self.assertEqual(deny_data['transfer']['value'], t_info['value'])
+        self.assertEqual(deny_data['transfer']['memo'], t_info['memo'])
+        self.assertEqual(deny_data['transfer']['status'], 'CANCELLED')
+        self.assertIsNotNone(deny_data['transfer']['opened_on'])
+        self.assertIsNotNone(deny_data['transfer']['closed_on'])
 
         db.session.remove()
 
