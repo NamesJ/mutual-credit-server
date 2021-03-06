@@ -41,9 +41,8 @@ class TransferCreateSchema(Schema):
     memo = fields.Str(required=False, validate=[Length(max=128)])
 
 
-### TODO: TransferSearchSchema class for user provided search terms (maybe?)
 class TransferSearchSchema(Schema):
-    ''' /transfer/search [POST]
+    """ /transfer/search [POST]
 
     Parameters:
     - Sender (Str)
@@ -51,7 +50,7 @@ class TransferSearchSchema(Schema):
     - Status (Str)
     - Value (Int)
     - Memo (Str)
-    '''
+    """
 
     sender = fields.Str(
         required=False,
@@ -59,7 +58,7 @@ class TransferSearchSchema(Schema):
             Length(min=4, max=15),
             Regexp(
                 r"^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)$",
-                error="Invalid username!",
+                error="Invalid sender username!",
             ),
         ],
     )
@@ -69,7 +68,7 @@ class TransferSearchSchema(Schema):
             Length(min=4, max=15),
             Regexp(
                 r"^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)$",
-                error="Invalid username!",
+                error="Invalid receiver username!",
             ),
         ],
     )

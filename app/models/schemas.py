@@ -2,6 +2,7 @@
 from app import ma
 
 from .user import User
+from .transfer import Transfer
 
 
 class UserSchema(ma.SQLAlchemyAutoSchema):

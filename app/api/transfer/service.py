@@ -14,7 +14,6 @@ transfer_schema = TransferSchema()
 class TransferService:
     @staticmethod
     def create_transfer(data):
-    #def create_transfer(sender, data):
         ## Required values
         username = data['receiver'] # receiver username
         value = data['value']
@@ -22,16 +21,18 @@ class TransferService:
         # Optional
         memo = data.get('memo', None)
 
+        from .utils import load_data
+
         try:
             # Check if receiver user exists
             if not (receiver := User.query.filter_by(username=username).first()):
                 return err_resp('Username does not exist', 'username_404', 404)
 
-            # Get sender username by ID from identity
+            # Get sender username by ID
             id = get_jwt_identity()
 
             # Get sender info
-            if not (sender := get_user_by_id(id)):
+            if not (sender := User.query.filter_by(id=id).first()):
                 return err_resp('Sender user does not exist', 'user_404', 404)
 
             # Check if receiver is the same username as sender (self-transact)
@@ -52,12 +53,12 @@ class TransferService:
             db.session.flush()
 
             # Load the new transfer's info
-            transfer_data = transfer_schema.dump(new_transfer)
+            transfer_data = load_data(new_transfer)
 
             # Commit changes to DB
             db.session.commit()
 
-            resp = message(True, 'Transfer has been initiated.')
+            resp = message(True, 'Transfer has been created.')
             # return transfer data with usernames instead of ids
             transfer_data['sender'] = sender.username
             transfer_data['receiver'] = receiver.username
@@ -112,12 +113,9 @@ class TransferService:
                 # Load data
                 transfer_data = load_data(transfer)
 
-                print('### transfer_data ###')
-                print(transfer_data)
-
                 # replace user IDs with usernames in response data
-                sender = get_user_by_id(transfer_data['sender'])
-                receiver = get_user_by_id(transfer_data['receiver'])
+                sender = User.query.filter_by(id=transfer.sender).first()
+                receiver = User.query.filter_by(id=transfer.receiver).first()
                 transfer_data.update({
                     'sender': sender.username,
                     'receiver': receiver.username

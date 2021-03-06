@@ -14,6 +14,7 @@ from app import create_app, db
 
 # Import models
 from app.models.user import User, Role, Permission
+from app.models.transfer import Transfer
 
 
 app = create_app(os.getenv("FLASK_CONFIG") or "default")

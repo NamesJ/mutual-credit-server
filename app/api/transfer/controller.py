@@ -1,9 +1,7 @@
 from flask import request
 from flask_restx import Resource
 from flask_jwt_extended import jwt_required
-#import jwt
 
-#import app.config
 from app.utils import validation_error
 
 from .service import TransferService
@@ -16,7 +14,6 @@ transfer_search_schema = TransferSearchSchema()
 api = TransferDto.api
 transfer_search_success = TransferDto.transfer_search_success
 transfer_create_success = TransferDto.transfer_create_success
-
 
 
 @api.route('/create')
@@ -32,11 +29,11 @@ class TransferCreate(Resource):
         responses={
             200: ("Transfer created", transfer_create_success),
             400: "Validations failed.",
-            404: "Email does not match any account.",
+            404: "Username does not match any account.",
         },
     )
     @api.expect(transfer_create, validate=True)
-    @jwt_required
+    @jwt_required()
     def post(self):
         ''' Initiate a new transfer '''
         # Grab the json data
@@ -60,10 +57,10 @@ class TransferSearch(Resource):
         "Transfer search",
         responses={
             200: ("Search succeeded", transfer_search_success),
-            404: "Transactions not found!.",
+            404: "Transactions not found!",
         },
     )
-    @jwt_required
+    @jwt_required()
     def get(self):
         ''' Get one or more transfer's data by attributes '''
         search_data = request.get_json()
