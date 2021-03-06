@@ -7,6 +7,7 @@ class TransferDto:
     transfer = api.model(
         'Transfer object',
         {
+            'id': fields.Integer,
             'sender': fields.String, # send back username instead of id
             'receiver': fields.String, # send back username instead of id
             'value': fields.Integer,
