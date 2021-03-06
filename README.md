@@ -4,8 +4,27 @@ A mutual credit server implemented as a REST API
 # Disclaimer
 This project is not yet ready for production use... but it's getting there.
 
-# Features
+# Current state of this project
+The requirements for this project are (roughly):
+* User authentication (register, login, recovery, etc.)
+  * Email-based registration
+    * Basic email based authentication is implemented
+    * No email verification process implemented yet
+  * User registration and login
+    * Working and with unit tests
+  * Token-based authentication
+    * Fully-implemented (thanks to Flask-JWT-Extended)
+  * Discord-based registration :)
+    * Discords community-based user management and extensive API mean that it could serve as an alternative to email in this case.
+    * Reflecting user roles from Discord into mutual credit server for assigning and managing permissions
+    * Direct Messaging from bot to server members for notifications and account recover (email stuff)
+* Credit System
+  * Transfers (create, cancel, deny, approve)
+    * Working and with a good deal of unit tests
+*
+*
 
+# Features
 * Full featured API framework with [Flask-RESTX](https://flask-restx.readthedocs.io/en/latest/)
 * Swagger Documentation (Part of Flask-RESTX).
 * JSON Web Token Authentication with [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/en/stable/)
@@ -14,6 +33,9 @@ This project is not yet ready for production use... but it's getting there.
 * Database Migrations using [Flask-Migrate](https://github.com/miguelgrinberg/flask-migrate)
 * Object serialization/deserialization with [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/)
 * Data validations with Marshmallow [Marshmallow](https://marshmallow.readthedocs.io/en/stable/quickstart.html#validation)
+
+## A very special thanks to `X1Zeth2X` for their flask-restx boilerplate
+Their code was extremely helpful in getting this project off the ground (and keeping the monolith from suffocating it to death). Check out their project [here](https://github.com/X1Zeth2X/flask-restx-boilerplate).
 
 ## Flask CLI help command output:
 ```sh
@@ -56,12 +78,12 @@ Read more at [Flask-SQLAlchemy's](https://flask-sqlalchemy.palletsprojects.com/e
 
 By default the `/` route is used by the `auth` blueprint.
 
-The rest of the resources are found in `/api` (This is the docs route by default, this can be changed easily).
+The rest of the resources are found in `/api`
 
 ## Installing
 ```sh
 # Clone the repo
-$ git clone https://github.com/X1Zeth2X/flask-restx-boilerplate.git
+$ git clone https://github.com/NamesJ/mutual-credit-server
 
 # Install packages from Pipfile.lock with pipenv (RECOMMENDED)
 $ pipenv install --ignore-pipfile
