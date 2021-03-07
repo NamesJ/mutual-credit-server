@@ -3,6 +3,7 @@ from app import ma
 
 from .account import Account
 from .user import User
+from .user_account import UserAccount
 from .transfer import Transfer
 
 
@@ -15,6 +16,11 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         # Fields to expose, add more if needed.
         fields = ("email", "name", "username", "joined_date", "role_id")
+
+
+class UserAccountSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        fields = ('user_id', 'account_id')
 
 
 class TransferSchema(ma.SQLAlchemyAutoSchema):
