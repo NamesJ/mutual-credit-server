@@ -13,6 +13,11 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
                   "joined_date", "role_id")
 
 
+class OfferSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        fields = ('id', 'seller', 'title', 'price', 'description')
+
+
 class TransferSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         fields = ('id', 'sender', 'receiver', 'value', 'memo', 'status',
