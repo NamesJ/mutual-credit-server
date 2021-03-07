@@ -1,8 +1,14 @@
 # Model Schemas
 from app import ma
 
+from .account import Account
 from .user import User
 from .transfer import Transfer
+
+
+class AccountSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        fields = ('id', 'balance', 'allowance')
 
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
