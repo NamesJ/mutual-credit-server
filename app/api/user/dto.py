@@ -17,7 +17,7 @@ class UserDto:
     user = api.model(
         "User object",
         {
-            "accounts": fields.List(fields.Nested(account))
+            "accounts": fields.List(fields.Nested(account)),
             "email": fields.String,
             "name": fields.String,
             "username": fields.String,
