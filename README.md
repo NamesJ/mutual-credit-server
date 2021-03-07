@@ -21,8 +21,6 @@ The requirements for this project are (roughly):
 * Credit System
   * Transfers (create, cancel, deny, approve)
     * Working and with a good deal of unit tests
-*
-*
 
 # Features
 * Full featured API framework with [Flask-RESTX](https://flask-restx.readthedocs.io/en/latest/)
