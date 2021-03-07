@@ -18,6 +18,11 @@ class OfferSchema(ma.SQLAlchemyAutoSchema):
         fields = ('id', 'seller', 'title', 'price', 'description')
 
 
+class TagSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        fields = ('entity_type', 'entity_value', 'tag')
+
+
 class TransferSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         fields = ('id', 'sender', 'receiver', 'value', 'memo', 'status',
