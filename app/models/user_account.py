@@ -11,4 +11,4 @@ class UserAccount(Model):
 
     user_id = Column(db.Integer, db.ForeignKey('user.id'))
     account_id = Column(db.Integer, db.ForeignKey('account.id'))
-    PrimaryKeyConstraint(user_id, account_id, name='user_account_pk')
+    db.PrimaryKeyConstraint(user_id, account_id, name='user_account_pk')

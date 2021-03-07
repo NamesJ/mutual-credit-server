@@ -14,6 +14,10 @@ class Config:
     ## Set the token to expire every week
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
 
+    # MCS defaults config
+    MCS_DEFAULT_ACCOUNT_ALLOWANCE = os.environ.get(
+            'MCS_DEFAULT_ACCOUNT_ALLOWANCE', 200)
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
