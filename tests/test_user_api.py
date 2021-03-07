@@ -19,7 +19,7 @@ def get_user_data(self, access_token, username):
     )
 
 
-def get_user_account_data(self, access_token, username):
+def get_user_accounts_data(self, access_token, username):
     return self.client.get(
         f"/api/user/accounts",
         headers={"Authorization": f"Bearer {access_token}"},
@@ -53,7 +53,7 @@ class TestUserBlueprint(BaseTestCase):
         self.assertEqual(user_404_resp.status_code, 404)
 
 
-    def test_user_account_get(self):
+    def test_user_accounts_get(self):
         ''' Test getting accounts for a user from DB '''
 
         # Create a mock user
@@ -77,14 +77,14 @@ class TestUserBlueprint(BaseTestCase):
 
         access_token = create_access_token(identity=user.id)
 
-        user_account_resp = get_user_account_data(self, access_token, username)
-        user_account_data = json.loads(user_account_resp.data.decode())
+        user_accounts_resp = get_user_accounts_data(self, access_token, username)
+        user_accounts_data = json.loads(user_accounts_resp.data.decode())
 
-        self.assertTrue(user_account_resp.status)
-        self.assertEqual(user_account_resp.status_code, 200)
-        self.assertEqual(user_account_data['user']['username'], username)
-        self.assertEqual(len(user_account_data['user']['accounts']), 1)
-        account_data = user_accounts_data['user']['accounts'][0]
-        self.assertEqual(account_data['id'], account.id)
-        self.assertEqual(account_data['balance'], account.balance)
-        self.assertEqual(account_data['allowance'], account.allowance)
+        self.assertTrue(user_accounts_resp.status)
+        self.assertEqual(user_accounts_resp.status_code, 200)
+        self.assertEqual(user_accounts_data['user']['username'], username)
+        self.assertEqual(len(user_accounts_data['user']['accounts']), 1)
+        accounts_data = user_accounts_data['user']['accounts']
+        self.assertEqual(account_data[0]['id'], account.id)
+        self.assertEqual(account_data[0]['balance'], account.balance)
+        self.assertEqual(account_data[0]['allowance'], account.allowance)
