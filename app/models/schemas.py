@@ -1,29 +1,19 @@
 # Model Schemas
 from app import ma
 
-from .account import Account
 from .user import User
-from .user_account import UserAccount
 from .transfer import Transfer
 
-
-class AccountSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        fields = ('id', 'balance', 'allowance')
 
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         # Fields to expose, add more if needed.
-        fields = ("email", "name", "username", "joined_date", "role_id")
-
-
-class UserAccountSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        fields = ('user_id', 'account_id')
+        fields = ("allowance", "balance", "email", "name", "username",
+                  "joined_date", "role_id")
 
 
 class TransferSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         fields = ('id', 'sender', 'receiver', 'value', 'memo', 'status',
-                'opened_on', 'closed_on')
+                  'opened_on', 'closed_on')

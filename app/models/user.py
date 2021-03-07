@@ -1,4 +1,11 @@
 from datetime import datetime
+import os
+
+try:
+    MCS_DEFAULT_ALLOWANCE = int(os.environ['MCS_DEFAULT_ALLOWANCE'])
+except:
+    MCS_DEFAULT_ALLOWANCE = 200
+
 from app import db, bcrypt
 
 # Alias common DB names
@@ -77,6 +84,8 @@ class User(Model):
     """ User model for storing user related data """
 
     id = Column(db.Integer, primary_key=True)
+    allowance = Column(db.Integer, default=MCS_DEFAULT_ALLOWANCE)
+    balance = Column(db.Integer, default=0)
     email = Column(db.String(64), unique=True, index=True)
     username = Column(db.String(15), unique=True, index=True)
     name = Column(db.String(64))

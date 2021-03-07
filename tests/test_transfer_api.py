@@ -141,6 +141,9 @@ class TestTransferBlueprint(BaseTestCase):
         self.assertIsNotNone(transfer_data['transfer']['opened_on'])
         self.assertIsNone(transfer_data['transfer']['closed_on'])
 
+        alice_balance_before = alice.balance
+        bobby_balance_before = bobby.balance
+
         # Bobby approves the transfer from Alice
         approve_response = update_transfer_status(self, bobby_access_token,
                                     transfer_data['transfer']['id'], 'approve')
@@ -154,6 +157,9 @@ class TestTransferBlueprint(BaseTestCase):
         self.assertNotEqual(transfer_data['transfer']['status'], approve_data['transfer']['status'])
         self.assertEqual(transfer_data['transfer']['opened_on'], approve_data['transfer']['opened_on'])
         self.assertNotEqual(transfer_data['transfer']['closed_on'], approve_data['transfer']['closed_on'])
+
+        self.assertEqual(alice.balance, alice_balance_before - t_info['value'])
+        self.assertEqual(bobby.balance, alice_balance_before + t_info['value'])
 
         # Check new values for transfer are as expected
         self.assertTrue(approve_response.status)

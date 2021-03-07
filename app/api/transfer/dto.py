@@ -4,8 +4,15 @@ from flask_restx import Namespace, fields
 class TransferDto:
 
     api = Namespace('transfer', description='Transfer related operations.')
+    transfer_get = api.model(
+        'Trasnfer id data',
+        {
+            'id': fields.Integer,
+        },
+    )
+
     transfer = api.model(
-        'Transfer object',
+        'Transfer data',
         {
             'id': fields.Integer,
             'sender': fields.String, # send back username instead of id

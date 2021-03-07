@@ -58,11 +58,11 @@ class TransferService:
             # Commit changes to DB
             db.session.commit()
 
-            resp = message(True, 'Transfer has been created.')
             # return transfer data with usernames instead of ids
-            transfer_data['sender'] = sender.username
-            transfer_data['receiver'] = receiver.username
+            resp = message(True, 'Transfer has been created.')
             resp['transfer'] = transfer_data
+            resp['transfer']['sender'] = sender.username
+            resp['transfer']['receiver'] = receiver.username
             return resp, 200
 
         except Exception as error:
@@ -208,6 +208,9 @@ class TransferService:
                     return err_resp('Only the receiver can approve a pending transfer', 'auth_404', 404)
                 transfer.status = 'APPROVED'
                 transfer.closed_on = datetime.utcnow()
+                # Update balances for sender and receiver
+                sender.balance = sender.balance - transfer.value
+                receiver.balance = receiver.balance + transfer.value
 
             elif action == 'cancel':
                 # Only the sender can cancel a pending transfer

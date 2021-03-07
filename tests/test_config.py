@@ -13,7 +13,8 @@ class TestDevelopmentConfig(unittest.TestCase):
 
         self.assertFalse(app.config["SECRET_KEY"] == "GahNooSlasHLinUcks")
         self.assertTrue(app.config["DEBUG"])
-        self.assertTrue(app.config['MCS_DEFAULT_ACCOUNT_ALLOWANCE'], 200)
+        # optional
+        #self.assertTrue(app.config['MCS_DEFAULT_ACCOUNT_ALLOWANCE'])
         self.assertFalse(current_app is None)
         self.assertTrue(
             app.config["SQLALCHEMY_DATABASE_URI"]

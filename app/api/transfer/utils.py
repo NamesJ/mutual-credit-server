@@ -19,7 +19,7 @@ def load_data(transfer_db_obj):
 
 
 class TransferCreateSchema(Schema):
-    """ /transfer/create [POST]
+    """ /transfer [POST]
 
     Parameters:
     - Receiver (Str)

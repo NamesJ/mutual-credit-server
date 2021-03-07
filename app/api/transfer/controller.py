@@ -13,38 +13,47 @@ from .utils import (
     TransferStatusUpdateSchema
 )
 
-transfer_create_schema = TransferCreateSchema()
-transfer_get_schema = TransferGetSchema()
-transfer_search_schema = TransferSearchSchema()
-transfer_status_update_schema = TransferStatusUpdateSchema()
 
 api = TransferDto.api
 transfer_search_success = TransferDto.transfer_search_success
 transfer_success = TransferDto.transfer_success
 
+transfer_create_schema = TransferCreateSchema()
+transfer_get_schema = TransferGetSchema()
+transfer_search_schema = TransferSearchSchema()
+transfer_status_update_schema = TransferStatusUpdateSchema()
+
 
 @api.route('')
-class TransferCreate(Resource):
-    ''' Transfer create endpoint
+class Transfer(Resource):
+    ''' Transfer endpoint
     User creates transfer then receives transfer information
+    User sends transfer ID to get transfer information
     '''
 
     transfer_create = TransferDto.transfer_create
+    transfer_get = TransferDto.transfer_get
     transfer_status_update = TransferDto.transfer_status_update
 
     @api.doc(
-
+        'Get a specific transfer',
+        responses={
+            200: ('Transfer data successfully sent', transfer_success),
+            400: 'Validations failed.',
+            404: 'Transfer not found!',
+        },
     )
+    @api.expect(transfer_get, validate=True)
     @jwt_required()
     def get(self):
         ''' Get a transfer by ID '''
-        transfer_data = request.get_json()
+        data = request.get_json()
 
         # Validate data
-        if (errors := transfer_get_schema.validate(transfer_data)):
+        if (errors := transfer_get_schema.validate(data)):
             return validation_error(False, errors), 400
 
-        return TransferService.get_transfer_data(transfer_data)
+        return TransferService.get_transfer_data(data)
 
 
     @api.doc(
@@ -60,13 +69,13 @@ class TransferCreate(Resource):
     def post(self):
         ''' Initiate a new transfer '''
         # Grab the json data
-        transfer_data = request.get_json()
+        data = request.get_json()
 
         # Validate data
-        if (errors := transfer_create_schema.validate(transfer_data)):
+        if (errors := transfer_create_schema.validate(data)):
             return validation_error(False, errors), 400
 
-        return TransferService.create_transfer(transfer_data)
+        return TransferService.create_transfer(data)
 
 
     @api.doc(
@@ -81,13 +90,13 @@ class TransferCreate(Resource):
     @jwt_required()
     def put(self):
         ''' Update the status of an existing transfer '''
-        transfer_data = request.get_json()
+        data = request.get_json()
 
         # Validate data
-        if (errors := transfer_status_update_schema.validate(transfer_data)):
+        if (errors := transfer_status_update_schema.validate(data)):
             return validation_error(False, errors), 400
 
-        return TransferService.update_transfer_status(transfer_data)
+        return TransferService.update_transfer_status(data)
 
 
 
@@ -110,10 +119,10 @@ class TransferSearch(Resource):
     @jwt_required()
     def get(self):
         ''' Get one or more transfer's data by attributes '''
-        search_data = request.get_json()
+        data = request.get_json()
 
         # Validate data
-        if (errors := transfer_search_schema.validate(search_data)):
+        if (errors := transfer_search_schema.validate(data)):
             return validation_error(False, errors), 400
 
-        return TransferService.search_transfers_data(search_data)
+        return TransferService.search_transfers_data(data)

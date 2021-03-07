@@ -15,8 +15,8 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
 
     # MCS defaults config
-    MCS_DEFAULT_ACCOUNT_ALLOWANCE = os.environ.get(
-            'MCS_DEFAULT_ACCOUNT_ALLOWANCE', 200)
+    MCS_DEFAULT_ALLOWANCE = os.environ.get(
+            'MCS_DEFAULT_ALLOWANCE', 200)
 
 
 class DevelopmentConfig(Config):
