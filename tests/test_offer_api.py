@@ -19,7 +19,7 @@ def create_offer(self, access_token, payload):
     )
 
 
-def delete_offer(self, access_token, payload):
+def delete_offer_data(self, access_token, payload):
     return self.client.delete(
         f'/api/offer',
         headers={'Authorization': f'Bearer {access_token}'},
@@ -82,6 +82,37 @@ class TestOfferBlueprint(BaseTestCase):
         self.assertEqual(offer_data['offer']['description'], description)
         # self.assertIsNotNone(offer_data['offer']['created_on'])
 
+
+    def test_offer_delete(self):
+        ''' Test deleting an offer from DB '''
+
+        # Create a mock user (seller)
+        username = 'ClaustrophobicSkeleton'
+        user = User(username=username)
+
+        db.session.add(user)
+        db.session.commit()
+
+        access_token = create_access_token(identity=user.id)
+
+        # Create a mock offer
+        seller = username
+        title = 'SpOOoOoky cake'
+        price = 30
+        description = '1x spOOoOoky 9x13x2in cake'
+        offer = Offer(seller=seller, title=title, price=price,
+                      description=description)
+
+        db.session.add(offer)
+        db.session.commit()
+
+        payload = { 'id': offer.id }
+
+        offer_response = delete_offer_data(self, access_token, payload)
+        offer_data = json.loads(offer_response.data.decode())
+
+        self.assertTrue(offer_response.status)
+        self.assertEqual(offer_response.status_code, 200)
 
 
     def test_offer_get(self):
