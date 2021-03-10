@@ -50,7 +50,7 @@ class OfferGetSchema(Schema):
     - Id (Int)
     """
 
-    id = fields.Int(required=False, validate=[Range(min=1)])
+    id = fields.Int(required=True, validate=[Range(min=1)])
 
 
 
