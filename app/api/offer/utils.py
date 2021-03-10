@@ -63,6 +63,5 @@ class OfferUpdateSchema(Schema):
     - Description (Str)
     """
 
-    title = fields.Str(required=False, validate=[Length(max=128)])
-    price = fields.Int(validate=[Range(min=1)])
-    description = fields.Str(required=False, validate=[Length(max=4000)])
+    id = fields.Int(required=True, validate=[Range(min=1)])
+    changes = fields.Nested(OfferCreateSchema)
