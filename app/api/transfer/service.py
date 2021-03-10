@@ -108,14 +108,14 @@ class TransferService:
     def search_transfers_data(data):
         ''' Get transfers data by attributes '''
         # Optional values
-        id = data.get('sender', None)
-        sender = data.get('sender', None)
-        receiver = data.get('receiver', None)
-        status = data.get('status', None)
-        value = data.get('value', None)
-        memo = data.get('memo', None)
+        id = data.get('id')
+        sender = data.get('sender')
+        receiver = data.get('receiver')
+        status = data.get('status')
+        value = data.get('value')
+        memo = data.get('memo')
 
-        if not (sender or receiver or status or value):
+        if not (id or sender or receiver or status or value or memo):
             return err_resp('No valid search data provided', 'transfer_404', 404)
 
         # Convert `sender` user to User object
