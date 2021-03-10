@@ -55,7 +55,11 @@ class TestOfferBlueprint(BaseTestCase):
         price = 30
         description = '1x spOOoOoky 9x13x2in cake'
 
-        payload = dict(title=title, price=price, description=description)
+        payload = {
+            'title': title,
+            'price': price,
+            'description': description
+        }
 
         offer_response = create_offer(self, access_token, payload)
         offer_data = json.loads(offer_response.data.decode())
@@ -82,8 +86,7 @@ class TestOfferBlueprint(BaseTestCase):
         db.session.commit()
 
         access_token = create_access_token(identity=user.id)
- dict(id=offer.id, title=new_title, price=new_price,
-                       description=new_description)
+
         # Create a mock offer
         seller = username
         title = 'SpOOoOoky cake'
@@ -95,7 +98,7 @@ class TestOfferBlueprint(BaseTestCase):
         db.session.add(offer)
         db.session.commit()
 
-        payload = dict(id=offer.id)
+        payload = { 'id': offer.id }
 
         offer_response = get_offer_data(self, access_token, payload)
         offer_data = json.loads(offer_response.data.decode())
@@ -127,8 +130,7 @@ class TestOfferBlueprint(BaseTestCase):
         title = 'SpOOoOoky cake'
         price = 15
         description = '1x spOOoOoky 9x13x2in cake'
-        offer = Offer(seller=seller, title=title, price=price, dict(id=offer.id, title=new_title, price=new_price,
-                       description=new_description)
+        offer = Offer(seller=seller, title=title, price=price,
                       description=description)
 
         db.session.add(offer)
