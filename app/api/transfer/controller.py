@@ -106,23 +106,17 @@ class TransferSearch(Resource):
     User provides search terms then receives transfers data
     '''
 
-    transfer_obj = TransferDto.transfer
-
     @api.doc(
         "Transfer search",
         responses={
             200: ("Search succeeded", transfer_search_success),
+            400: 'Validation failed',
             404: "Transfers not found!",
         },
     )
-    @api.expect(transfer_obj, validate=True)
     @jwt_required()
     def get(self):
         ''' Get one or more transfer's data by attributes '''
         data = request.get_json()
-
-        # Validate data
-        if (errors := transfer_search_schema.validate(data)):
-            return validation_error(False, errors), 400
 
         return TransferService.search_transfers_data(data)
