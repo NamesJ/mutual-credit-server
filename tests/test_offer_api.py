@@ -135,7 +135,14 @@ class TestOfferBlueprint(BaseTestCase):
         # Update a single value
         new_price = 30
 
-        payload = dict(id=offer.id, price=new_price)
+        payload = {
+            'id': offer.id,
+            'changes': {
+                'price': new_price
+            }
+        }
+
+        dict(id=offer.id, changes=dict(price=new_price))
 
         offer_response = update_offer_info(self, access_token, payload)
         offer_data = json.loads(offer_response.data.decode())
