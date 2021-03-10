@@ -134,6 +134,5 @@ class OfferService:
             return resp, 200
 
         except Exception as error:
-            except Exception as error:
-                print(error)
-                return internal_err_resp()
+            print(error)
+            return internal_err_resp()
