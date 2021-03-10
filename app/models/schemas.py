@@ -15,7 +15,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 
 class OfferSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        fields = ('id', 'seller', 'title', 'price', 'description')
+        fields = ('id', 'seller', 'title', 'price', 'description', 'created_on')
 
 
 class TagSchema(ma.SQLAlchemyAutoSchema):

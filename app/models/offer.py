@@ -1,5 +1,7 @@
 from app import db
 
+from datetime import datetime
+
 # Aliias common DB names
 Column = db.Column
 Model = db.Model
@@ -12,3 +14,4 @@ class Offer(Model):
     title = Column(db.String(128))
     price = Column(db.Integer)
     description=Column(db.String(4000))
+    created_on = Column(db.DateTime, default=datetime.utcnow)
