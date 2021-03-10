@@ -60,7 +60,7 @@ class Offer(Resource):
         if (errors := offer_delete_schema.validate(data)):
             return validation_error(False, errors), 400
 
-        return OfferService.delete_offer(data)
+        return OfferService.delete_offer_data(data)
 
 
     @api.doc(
