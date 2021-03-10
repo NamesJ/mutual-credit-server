@@ -1,13 +1,13 @@
-import json
-
-from flask_jwt_extended import create_access_token
-
 from app import db
 from app.models.user import User
 from app.models.transfer import Transfer
 
 from tests.utils.base import BaseTestCase
 from tests.utils.common import register_user, login_user
+
+from flask_jwt_extended import create_access_token
+import itertools
+import json
 
 
 
@@ -35,6 +35,15 @@ def get_transfer_data(self, access_token, id):
         headers={'Authorization': f'Bearer {access_token}'},
         content_type='application/json',
         data=json.dumps({ 'id': id })
+    )
+
+
+def search_transfers_data(self, access_token, payload):
+    return self.client.get(
+        '/api/transfer/search',
+        headers={'Authorization': f'Bearer {access_token}'},
+        content_type='application/json',
+        data=json.dumps(payload)
     )
 
 
@@ -361,5 +370,90 @@ class TestTransferBlueprint(BaseTestCase):
         self.assertEqual(transfer_data['transfer']['status'], 'PENDING')
         self.assertIsNotNone(transfer_data['transfer']['opened_on'])
         self.assertIsNone(transfer_data['transfer']['closed_on'])
+
+        db.session.remove()
+
+
+    def test_transfer_search(self):
+        ''' Test get transfers by search '''
+        # Create two new mock users
+        alice_username = 'alice'
+        alice = User(username=alice_username)
+
+        db.session.add(alice)
+        db.session.commit()
+
+        access_token = create_access_token(identity=alice.id)
+
+        bobby_username = 'bobby'
+        bobby = User(username=bobby_username)
+
+        db.session.add(bobby)
+        db.session.commit()
+
+        # Alice creates transfer to Bobby
+        sender = alice_username
+        receiver = bobby_username
+        value=45
+        memo='baking supplies'
+        transfer0 = Transfer(sender=alice.id, receiver=bobby.id, value=value,
+                            memo=memo)
+
+        db.session.add(transfer0)
+        db.session.commit()
+
+        transfer_info = {
+            'id': transfer0.id,
+            'sender': alice_username,
+            'receiver': bobby_username,
+            'status': transfer0.status,
+            'value': transfer0.value,
+            'memo': transfer0.memo
+        }
+
+
+        all_combinations = []
+
+        # all combinations of key-value pairs
+        for num_pairs in range(1, len(transfer_info)-1):
+            cmbs = list(map(dict,itertools.combinations(transfer_info.items(),
+                                                        num_pairs)))
+            all_combinations.append(cmbs)
+
+        # search all combinations
+        for cmb in all_combinations:
+            payload = {}
+
+            for d in cmb:
+                payload.update(d)
+
+            transfers_response = search_transfers_data(self, access_token,
+                                                       payload)
+            transfers_data = json.loads(transfers_response.data.decode())
+
+            self.assertTrue(transfers_response.status)
+            self.assertEqual(transfers_response.status_code, 200)
+            #self.assertEqual(len(transfers_data['transfers']), 2)
+
+            for transfer_data in transfers_data['transfers']:
+                self.assertEqual(transfer_data['sender'], sender)
+                self.assertEqual(transfer_data['receiver'], receiver)
+                self.assertEqual(transfer_data['value'], value)
+                self.assertEqual(transfer_data['memo'], memo)
+                self.assertEqual(transfer_data['status'], 'PENDING')
+                self.assertIsNotNone(transfer_data['opened_on'])
+                self.assertIsNone(transfer_data['closed_on'])
+
+        # search for value that doesn't exist in DB
+        payload = {
+            'sender': 'sender.username.that.does.not.exist'
+        }
+
+        transfers_response = search_transfers_data(self, access_token, payload)
+        transfers_data = json.loads(transfers_response.data.decode())
+
+        self.assertTrue(transfers_response.status)
+        self.assertEqual(transfers_response.status_code, 404)
+
 
         db.session.remove()
