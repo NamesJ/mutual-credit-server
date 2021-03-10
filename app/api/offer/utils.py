@@ -18,6 +18,7 @@ def load_data(offer_db_obj):
     return data
 
 
+
 class OfferCreateSchema(Schema):
     """ /offer [POST]
 
@@ -30,6 +31,16 @@ class OfferCreateSchema(Schema):
     title = fields.Str(required=False, validate=[Length(max=128)])
     price = fields.Int(validate=[Range(min=1)])
     description = fields.Str(required=False, validate=[Length(max=4000)])
+
+
+class OfferDeleteSchema(Schema):
+    """ /offer [DELETE]
+
+    Parameters:
+    - Id (Int)
+    """
+
+    id = fields.Int(required=True, validate=[Range(min=1)])
 
 
 class OfferGetSchema(Schema):
