@@ -40,7 +40,7 @@ class OfferService:
             db.session.add(new_offer)
             db.session.flush()
 
-            offer_data = load_data(offer)
+            offer_data = load_data(new_offer)
             offer_data['seller'] = user.username
 
             db.session.commit()
