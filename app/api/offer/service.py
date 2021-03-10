@@ -87,16 +87,17 @@ class OfferService:
 
 
     @staticmethod
-    def update_offer_info(data):
+    def update_offer_data(data):
         ''' Update offer info by ID '''
 
         # Required values
         offer_id = data['id']
+        changes = data['changes']
 
         # Optional values
-        title = data.get('title', None)
-        price = data.get('price', None)
-        description = data.get('description', None)
+        title = changes.get('title')
+        price = changes.get('price')
+        description = changes.get('description')
 
         from .utils import load_data
 
@@ -108,21 +109,21 @@ class OfferService:
             # Get user's ID
             id = get_jwt_identity()
 
-            # Get user info by ID (and check that user exists)
+            # Check if user exists and get user info
             if not (user := User.query.filter_by(id=id).first()):
-                return err_resp('User with this ID does not exist', 'user_404', 404)
+                return err_resp('User does not exist', 'user_404', 404)
 
             # Check if offer exists
             if not (offer := Offer.query.filter_by(id=offer_id).first()):
                 return err_resp('Offer does not exist', 'offer_404', 404)
 
             # Check that user is the seller for this offer
-            if offer.seller_id != seller.id:
+            if offer.seller != user.username:
                 return err_resp('You can only edit your own offers', 'auth_404', 404)
 
-            if title: offer.title = title
-            if price: offer.price = price
-            if description: offer.description = description
+            offer.title = title or offer.title
+            offer.price = price or offer.price
+            offer.description = description or offer.description
 
             db.session.commit()
 
