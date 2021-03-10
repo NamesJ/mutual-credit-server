@@ -19,6 +19,15 @@ def create_offer(self, access_token, payload):
     )
 
 
+def delete_offer(self, access_token, payload):
+    return self.client.delete(
+        f'/api/offer',
+        headers={'Authorization': f'Bearer {access_token}'},
+        content_type='application/json',
+        data=json.dumps(payload)
+    )
+
+
 def get_offer_data(self, access_token, payload):
     return self.client.get(
         f'/api/offer',
