@@ -9,7 +9,7 @@ api = UserDto.api
 data_resp = UserDto.data_resp
 
 
-@api.route('')
+@api.route('/<username>')
 class UserGet(Resource):
     ''' User endpoint
     '''
@@ -22,10 +22,10 @@ class UserGet(Resource):
             404: 'User not found!',
         },
     )
-    @api.expect(user_get, validate=True)
+    #@api.expect(user_get, validate=True)
     @jwt_required()
-    def get(self):
+    def get(self, username):
         ''' Get a specific user's data by their username '''
-        data = request.get_json()
+        #data = request.get_json()
 
-        return UserService.get_user_data(data)
+        return UserService.get_user_data(username)
