@@ -1,5 +1,5 @@
 # mutual-credit-server
-A mutual credit server implemented as a REST API
+A mutual credit system implemented as a REST API server
 
 # Disclaimer
 This project is not yet ready for production use... but it's getting there.
