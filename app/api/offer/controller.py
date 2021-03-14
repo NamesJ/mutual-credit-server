@@ -25,22 +25,34 @@ offer_get_schema = OfferGetSchema()
 offer_update_schema = OfferUpdateSchema()
 
 
-@api.route('')
-class Offer(Resource):
-    ''' Offer endpoint
-    DELETE: User sends offer ID and offer is deleted from DB
-    GET:    User sends offer ID and receives offer info
-    POST:   User creates offer then receives offer info
-    PUT:    User sends offer ID name:value pairsto be updated and offer info is
-            updated
-    '''
+@api.route('/<int:offer_id>')
+class OfferGet(Resource):
+    ''' Offer get endpoint '''
 
-    # API models for resources input
-    offer_delete = OfferDto.offer_delete
-    offer_create = OfferDto.offer_create
     offer_get = OfferDto.offer_get
-    offer_update = OfferDto.offer_update
 
+    @api.doc(
+        'Get a specific offer',
+        responses={
+            200: ('Offer deleted successfully', offer_success),
+            400: 'Validations failed.',
+            404: 'Bad/non-existant user, status, authorization.',
+        },
+    )
+    #@api.expect(offer_get, validate=True)
+    @jwt_required()
+    def get(self, offer_id):
+        ''' Get info for a specific offer '''
+        #data = request.get_json()
+
+        # Validate data
+        #if (errors := offer_get_schema.validate(data)):
+        #    return validation_error(False, errors), 400
+
+        return OfferService.get_offer_data(offer_id)
+
+
+    offer_delete = OfferDto.offer_delete
 
     @api.doc(
         'Offer delete',
@@ -50,7 +62,7 @@ class Offer(Resource):
             404: 'Bad/non-existant user, status, authorization.',
         },
     )
-    @api.expect(offer_delete, validate=True)
+    #@api.expect(offer_delete, validate=True)
     @jwt_required()
     def delete(self, offer_id):
         ''' Delete info for a specific offer '''
@@ -63,25 +75,19 @@ class Offer(Resource):
         return OfferService.delete_offer_data(offer_id)
 
 
-    @api.doc(
-        'Get a specific offer',
-        responses={
-            200: ('Offer deleted successfully', offer_success),
-            400: 'Validations failed.',
-            404: 'Bad/non-existant user, status, authorization.',
-        },
-    )
-    @api.expect(offer_get, validate=True)
-    @jwt_required()
-    def get(self, offer_id):
-        ''' Get info for a specific offer '''
-        #data = request.get_json()
+@api.route('')
+class Offer(Resource):
+    ''' Offer endpoint
+    DELETE: User sends offer ID and offer is deleted from DB
+    GET:    User sends offer ID and receives offer info
+    POST:   User creates offer then receives offer info
+    PUT:    User sends offer ID name:value pairsto be updated and offer info is
+            updated
+    '''
 
-        # Validate data
-        #if (errors := offer_get_schema.validate(data)):
-        #    return validation_error(False, errors), 400
-
-        return OfferService.get_offer_data(offer_id)
+    # API models for resources input
+    offer_create = OfferDto.offer_create
+    offer_update = OfferDto.offer_update
 
 
     @api.doc(
