@@ -31,10 +31,9 @@ def update_transfer_status(self, access_token, id, status):
 
 def get_transfer_data(self, access_token, id):
     return self.client.get(
-        f'/api/transfer',
+        f'/api/transfer/{id}',
         headers={'Authorization': f'Bearer {access_token}'},
-        content_type='application/json',
-        data=json.dumps({ 'id': id })
+        content_type='application/json'
     )
 
 

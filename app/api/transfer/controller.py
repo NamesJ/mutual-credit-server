@@ -24,16 +24,11 @@ transfer_search_schema = TransferSearchSchema()
 transfer_status_update_schema = TransferStatusUpdateSchema()
 
 
-@api.route('')
-class Transfer(Resource):
-    ''' Transfer endpoint
-    User creates transfer then receives transfer information
-    User sends transfer ID to get transfer information
-    '''
+@api.route('/<int:transfer_id>')
+class TransferGet(Resource):
+    ''' Transfer get endpoint '''
 
-    transfer_create = TransferDto.transfer_create
     transfer_get = TransferDto.transfer_get
-    transfer_status_update = TransferDto.transfer_status_update
 
     @api.doc(
         'Get a specific transfer',
@@ -43,17 +38,30 @@ class Transfer(Resource):
             404: 'Transfer not found!',
         },
     )
-    @api.expect(transfer_get, validate=True)
+    #@api.expect(transfer_get, validate=True)
     @jwt_required()
-    def get(self):
+    def get(self, transfer_id):
         ''' Get a transfer by ID '''
-        data = request.get_json()
+        #data = request.get_json()
 
         # Validate data
-        if (errors := transfer_get_schema.validate(data)):
-            return validation_error(False, errors), 400
+        #if (errors := transfer_get_schema.validate(data)):
+        #    return validation_error(False, errors), 400
 
-        return TransferService.get_transfer_data(data)
+        return TransferService.get_transfer_data(transfer_id)
+
+
+
+
+@api.route('')
+class Transfer(Resource):
+    ''' Transfer endpoint
+    User creates transfer then receives transfer information
+    User sends transfer ID to get transfer information
+    '''
+
+    transfer_create = TransferDto.transfer_create
+    transfer_status_update = TransferDto.transfer_status_update
 
 
     @api.doc(
