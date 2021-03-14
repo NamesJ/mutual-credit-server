@@ -39,6 +39,24 @@ class TransferService:
             if receiver.id == sender.id:
                 return err_resp('Receiver is sender', 'username_404', 404)
 
+            # get pending debits
+            pending_debits = 0
+            search_info = { 'sender': sender.username, 'status': 'PENDING' }
+            if (transfers := Transfer.query.filter_by(**search_info).all()):
+
+                for transfer in transfers:
+                    pending_debits += transfer.value
+
+            # Check if user has sufficient available balance for this transfer
+            available_balance = sender.balance-pending_debits+sender.allowance
+
+            print(f'available_balance: {available_balance}')
+
+            if available_balance < value:
+                return err_resp('Sender does not have sufficient balance',
+                                'balance_404', 404)
+
+
             new_transfer = Transfer(
                 sender=sender.id,
                 receiver=receiver.id,

@@ -70,6 +70,7 @@ class Transfer(Resource):
             200: ("Transfer created", transfer_success),
             400: "Validations failed.",
             404: "Username does not match any account.",
+            404: 'User available balance too low'
         },
     )
     @api.expect(transfer_create, validate=True)
@@ -78,6 +79,9 @@ class Transfer(Resource):
         ''' Initiate a new transfer '''
         # Grab the json data
         data = request.get_json()
+
+        # Perform check to see if user has balance within range
+
 
         # Validate data
         if (errors := transfer_create_schema.validate(data)):
