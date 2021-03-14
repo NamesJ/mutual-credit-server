@@ -55,10 +55,10 @@ class OfferService:
 
 
     @staticmethod
-    def delete_offer_data(data):
+    def delete_offer_data(offer_id):
         ''' Delete offer data by ID '''
 
-        offer_id = data['id']
+        #offer_id = data['id']
 
         from .utils import load_data
 
@@ -91,10 +91,10 @@ class OfferService:
 
 
     @staticmethod
-    def get_offer_data(data):
+    def get_offer_data(offer_id):
         ''' Get offer data by ID '''
 
-        offer_id = data['id']
+        #offer_id = data['id']
 
         from .utils import load_data
 

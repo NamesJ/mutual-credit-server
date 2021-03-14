@@ -52,15 +52,15 @@ class Offer(Resource):
     )
     @api.expect(offer_delete, validate=True)
     @jwt_required()
-    def delete(self):
+    def delete(self, offer_id):
         ''' Delete info for a specific offer '''
-        data = request.get_json()
+        #data = request.get_json()
 
         # Validate data
-        if (errors := offer_delete_schema.validate(data)):
-            return validation_error(False, errors), 400
+        #if (errors := offer_delete_schema.validate(data)):
+        #    return validation_error(False, errors), 400
 
-        return OfferService.delete_offer_data(data)
+        return OfferService.delete_offer_data(offer_id)
 
 
     @api.doc(
@@ -73,15 +73,15 @@ class Offer(Resource):
     )
     @api.expect(offer_get, validate=True)
     @jwt_required()
-    def get(self):
+    def get(self, offer_id):
         ''' Get info for a specific offer '''
-        data = request.get_json()
+        #data = request.get_json()
 
         # Validate data
-        if (errors := offer_get_schema.validate(data)):
-            return validation_error(False, errors), 400
+        #if (errors := offer_get_schema.validate(data)):
+        #    return validation_error(False, errors), 400
 
-        return OfferService.get_offer_data(data)
+        return OfferService.get_offer_data(offer_id)
 
 
     @api.doc(
