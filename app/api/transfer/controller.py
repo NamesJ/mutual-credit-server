@@ -45,15 +45,15 @@ class Transfer(Resource):
     )
     @api.expect(transfer_get, validate=True)
     @jwt_required()
-    def get(self):
+    def get(self, transfer_id):
         ''' Get a transfer by ID '''
-        data = request.get_json()
+        #data = request.get_json()
 
         # Validate data
-        if (errors := transfer_get_schema.validate(data)):
-            return validation_error(False, errors), 400
+        #if (errors := transfer_get_schema.validate(data)):
+        #    return validation_error(False, errors), 400
 
-        return TransferService.get_transfer_data(data)
+        return TransferService.get_transfer_data(transfer_id)
 
 
     @api.doc(
