@@ -19,21 +19,19 @@ def create_offer(self, access_token, payload):
     )
 
 
-def delete_offer_data(self, access_token, payload):
+def delete_offer_data(self, access_token, offer_id):
     return self.client.delete(
-        f'/api/offer',
+        f'/api/offer/{offer_id}',
         headers={'Authorization': f'Bearer {access_token}'},
-        content_type='application/json',
-        data=json.dumps(payload)
+        content_type='application/json'
     )
 
 
-def get_offer_data(self, access_token, payload):
+def get_offer_data(self, access_token, offer_id):
     return self.client.get(
-        f'/api/offer',
+        f'/api/offer/{offer_id}',
         headers={'Authorization': f'Bearer {access_token}'},
-        content_type='application/json',
-        data=json.dumps(payload)
+        content_type='application/json'
     )
 
 
@@ -106,9 +104,7 @@ class TestOfferBlueprint(BaseTestCase):
         db.session.add(offer)
         db.session.commit()
 
-        payload = { 'id': offer.id }
-
-        offer_response = delete_offer_data(self, access_token, payload)
+        offer_response = delete_offer_data(self, access_token, offer.id)
         offer_data = json.loads(offer_response.data.decode())
 
         self.assertTrue(offer_response.status)
@@ -138,9 +134,8 @@ class TestOfferBlueprint(BaseTestCase):
         db.session.add(offer)
         db.session.commit()
 
-        payload = { 'id': offer.id }
-
-        offer_response = get_offer_data(self, access_token, payload)
+        offer_response = get_offer_data(self, access_token, offer.id)
+        print(offer_response)
         offer_data = json.loads(offer_response.data.decode())
 
         self.assertTrue(offer_response.status)
