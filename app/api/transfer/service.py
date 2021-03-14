@@ -71,9 +71,8 @@ class TransferService:
 
 
     @staticmethod
-    def get_transfer_data(data):
+    def get_transfer_data(transfer_id):
         ''' Get transfer data by ID '''
-        transfer_id = data['id']
 
         from .utils import load_data
 
